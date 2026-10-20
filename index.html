@@ -49,6 +49,22 @@ h2{font-size:clamp(22px,4vw,30px);margin:44px 0 8px;letter-spacing:-.01em}
 .split{display:flex;height:30px;border-radius:8px;overflow:hidden;background:var(--line);gap:3px}
 .split span{display:flex;align-items:center;font:700 14px "Bricolage Grotesque",sans-serif;color:#fff;padding:0 10px;width:50%;transition:width .8s cubic-bezier(.2,.8,.2,1);white-space:nowrap}
 .split .a{background:var(--ac)}.split .b{background:#3d4f74;justify-content:flex-end}
+header a.brand{color:inherit;text-decoration:none}.tl{color:var(--mut);font-size:15px}
+.hero{padding:34px 0 14px}.hero h1{font-size:clamp(38px,9vw,84px);line-height:1;margin:0 0 14px;max-width:13ch}
+.hero p{color:var(--mut);max-width:46ch;margin:0 0 24px;font-size:20px}
+#flt{display:inline-flex}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-top:22px}
+.card{display:block;text-decoration:none;background:var(--board);border-radius:18px;padding:20px;position:relative;overflow:hidden;transition:transform .2s}
+.card:hover,.card:focus-visible{transform:translateY(-4px)}
+.card[data-s="futbol"]{--board:#10331f;--chalk:#e9f2ec}
+.card[data-s="nba"]{--board:#6b3f1d;--chalk:#fbeede}
+.card::after{content:"";position:absolute;right:-34px;bottom:-34px;width:130px;height:130px;border:2px solid var(--chalk);opacity:.16;border-radius:50%}
+.card .tag{display:flex;justify-content:space-between;font:500 13px "Bricolage Grotesque",sans-serif;color:var(--chalk);opacity:.8}
+.card h3{font:800 23px/1.15 "Bricolage Grotesque",sans-serif;margin:14px 0 6px;color:var(--chalk)}
+.card .sc{font:800 42px/1 "Bricolage Grotesque",sans-serif;color:var(--ac2)}
+.card p{margin:12px 0 0;font-size:15px;color:var(--chalk);opacity:.85}
+.back{display:inline-block;margin:4px 0 10px;color:var(--mut);text-decoration:none;font:500 15px "Bricolage Grotesque",sans-serif}
+@media (max-width:520px){.tl{display:none}}
 /* editor */
 #ed{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 18px 20px;margin-top:24px}
 #ed h2{margin:14px 0 4px}#ed h3{font-size:17px;margin:14px 0 8px}
@@ -70,13 +86,16 @@ h2{font-size:clamp(22px,4vw,30px);margin:44px 0 8px;letter-spacing:-.01em}
 <body data-sport="futbol">
 <main>
 <header>
-  <div class="brand" id="brand"></div>
-  <div class="tabs" role="group" aria-label="Deporte">
-    <button id="t-futbol" aria-pressed="true">Fútbol</button>
-    <button id="t-nba" aria-pressed="false">NBA</button>
-  </div>
+  <a class="brand" id="brand" href="#/"></a>
+  <span class="tl">Análisis de fútbol y NBA</span>
 </header>
-<div class="chips" id="chips"></div>
+<div id="inicio">
+  <div class="hero"><h1>Cómo se paró cada equipo</h1><p>Partido por partido, con la pizarra y mi lectura. Elegí uno para entrar.</p></div>
+  <div class="tabs" id="flt" role="group" aria-label="Filtrar por deporte"></div>
+  <div class="grid" id="grid"></div>
+</div>
+<div id="vpartido" hidden>
+<a class="back" href="#/">← Todos los partidos</a>
 <h1 id="h1"></h1>
 <p class="sub" id="sub"></p>
 <section class="stage" aria-label="Pizarra del partido">
@@ -84,12 +103,13 @@ h2{font-size:clamp(22px,4vw,30px);margin:44px 0 8px;letter-spacing:-.01em}
   <svg id="board" role="img" aria-label="Formación de los equipos"></svg>
   <div id="info"></div>
 </section>
-<section id="ed" hidden></section>
 <h2>Mi lectura</h2>
 <p class="lect" id="lect"></p>
 <h2>Los números</h2>
 <div class="vs"><span id="na"></span><span id="nb"></span></div>
 <div id="metrics"></div>
+</div>
+<section id="ed" hidden></section>
 </main>
 <script src="partidos.js"></script>
 <script>
@@ -98,8 +118,8 @@ if(typeof PARTIDOS==="undefined"){
  const J=(p,n)=>Array.from({length:n},(_,i)=>[p+" "+(i+1),"",""]);
  window.NOMBRE="Línea de tres";
  window.PARTIDOS=[
- {deporte:"futbol",fecha:"12 de octubre de 2026",resultado:"2-1",a:{nombre:"Equipo A",esquema:"4-3-3",jugadores:J("Jugador A",11)},b:{nombre:"Equipo B",esquema:"4-4-2",jugadores:J("Jugador B",11)},lectura:"Acá va tu análisis del partido.",datos:[["Posesión (%)",58,42],["Remates al arco",7,3]]},
- {deporte:"nba",fecha:"15 de octubre de 2026",resultado:"112-104",a:{nombre:"Equipo A",esquema:"",jugadores:J("Jugador A",5)},b:{nombre:"Equipo B",esquema:"",jugadores:J("Jugador B",5)},lectura:"Acá va tu análisis del partido de básquet.",datos:[["Triples convertidos",15,11],["Asistencias",29,22]]}];
+ {id:"ejemplo-1",deporte:"futbol",fecha:"12 de octubre de 2026",resultado:"2-1",a:{nombre:"Equipo A",esquema:"4-3-3",jugadores:J("Jugador A",11)},b:{nombre:"Equipo B",esquema:"4-4-2",jugadores:J("Jugador B",11)},lectura:"Acá va tu análisis del partido.",datos:[["Posesión (%)",58,42],["Remates al arco",7,3]]},
+ {id:"ejemplo-2",deporte:"nba",fecha:"15 de octubre de 2026",resultado:"112-104",a:{nombre:"Equipo A",esquema:"",jugadores:J("Jugador A",5)},b:{nombre:"Equipo B",esquema:"",jugadores:J("Jugador B",5)},lectura:"Acá va tu análisis del partido de básquet.",datos:[["Triples convertidos",15,11],["Asistencias",29,22]]}];
 }
 const $=id=>document.getElementById(id),NS="http://www.w3.org/2000/svg";
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -171,14 +191,27 @@ function show(){
  $("metrics").innerHTML=m.datos.map(r=>'<div class="m"><div class="lab">'+esc(r[0])+'</div><div class="split"><span class="a" style="width:50%">'+esc(r[1])+'</span><span class="b" style="width:50%">'+esc(r[2])+'</span></div></div>').join("");
  requestAnimationFrame(()=>[...$("metrics").children].forEach((el,i)=>{const r=m.datos[i],s=(r[1]+r[2])||1;el.querySelector(".a").style.width=r[1]/s*100+"%";el.querySelector(".b").style.width=r[2]/s*100+"%"}));
 }
-function chips(){
- $("chips").innerHTML="";
- list().forEach((m,i)=>{const b=document.createElement("button");b.textContent=m.fecha.replace(/ de 20\d\d$/,"")+": "+m.a.nombre+" vs "+m.b.nombre;b.setAttribute("aria-pressed",i===idx);
-  b.onclick=()=>{idx=i;chips();show();if(EDIT)ed()};$("chips").appendChild(b)});
+let inHome=true,flt="todos";
+const pid=(m,i)=>m.id||String(i),SP={futbol:"Fútbol",nba:"NBA"};
+function renderHome(){
+ const f=$("flt");f.innerHTML="";
+ [["todos","Todos"],["futbol","Fútbol"],["nba","NBA"]].forEach(o=>{const b=document.createElement("button");b.textContent=o[1];b.setAttribute("aria-pressed",o[0]===flt);b.onclick=()=>{flt=o[0];renderHome()};f.appendChild(b)});
+ const g=$("grid");g.innerHTML="";
+ PARTIDOS.forEach((m,i)=>{if(flt!=="todos"&&m.deporte!==flt)return;
+  const a=document.createElement("a");a.className="card";a.dataset.s=m.deporte;a.href="#/partido/"+encodeURIComponent(pid(m,i));
+  a.innerHTML='<div class="tag"><span>'+SP[m.deporte]+'</span><span>'+esc(m.fecha)+'</span></div><h3>'+esc(m.a.nombre)+'<br>'+esc(m.b.nombre)+'</h3><div class="sc">'+esc(m.resultado)+'</div><p>'+(m.a.esquema?esc(m.a.esquema+" vs "+m.b.esquema)+". ":"")+'Ver el partido →</p>';
+  g.appendChild(a)});
+ if(!g.children.length)g.innerHTML='<p class="sub">Todavía no hay partidos acá.</p>';
 }
-function setSport(s){sport=s;idx=0;nodes=[];mode=s==="nba"?"A":"ambos";document.body.dataset.sport=s;
- ["futbol","nba"].forEach(k=>$("t-"+k).setAttribute("aria-pressed",k===s));chips();show();if(EDIT)ed()}
-$("t-futbol").onclick=()=>setSport("futbol");$("t-nba").onclick=()=>setSport("nba");
+function route(){
+ const mm=decodeURIComponent(location.hash.slice(1)).match(/^\/partido\/(.+)$/),m=mm&&PARTIDOS.find((x,i)=>pid(x,i)===mm[1]);
+ inHome=!m;$("inicio").hidden=!inHome;$("vpartido").hidden=inHome;
+ document.title=(m?m.a.nombre+" "+m.resultado+" "+m.b.nombre+" · ":"")+NOMBRE+" · Análisis de fútbol y NBA";
+ if(inHome){document.body.dataset.sport="futbol";renderHome()}
+ else{sport=m.deporte;document.body.dataset.sport=sport;idx=list().indexOf(m);mode=sport==="nba"?"A":"ambos";nodes=[];show()}
+ if(EDIT)ed();scrollTo(0,0);
+}
+addEventListener("hashchange",route);
 
 /* ---------- Modo editor: solo se abre con ?editor y solo cambia TU copia ---------- */
 const $e=(t,c,k)=>{const e=document.createElement(t);if(c)e.className=c;(k||[]).forEach(x=>e.append(x));return e};
@@ -186,9 +219,10 @@ const inp=(v,fn,tp,ph)=>{const a=tp==="area",i=$e(a?"textarea":"input");if(tp&&!
 const fld=(l,e)=>{const x=$e("label","fl",[l]);x.append(e);return x};
 const btn=(t,fn,c)=>{const b=$e("button",c||"mini",[t]);b.type="button";b.onclick=fn;return b};
 function sync(){try{localStorage.setItem("lt-borrador",JSON.stringify({n:NOMBRE,p:PARTIDOS}))}catch(e){}
- $("brand").textContent=NOMBRE;chips();show()}
-function nuevo(){const n=sport==="nba"?5:11,eq=t=>({nombre:t,esquema:sport==="nba"?"":"4-3-3",jugadores:Array.from({length:n},(_,i)=>["Jugador "+(i+1),"",""])});
- return{deporte:sport,fecha:"",resultado:"0-0",a:eq("Equipo A"),b:eq("Equipo B"),lectura:"",datos:[["Dato",1,1]]}}
+ $("brand").textContent=NOMBRE;renderHome();if(!inHome)show()}
+function add(sp){const n=nuevo(sp);PARTIDOS.unshift(n);sync();location.hash="#/partido/"+n.id}
+function nuevo(sp){const n=sp==="nba"?5:11,eq=t=>({nombre:t,esquema:sp==="nba"?"":"4-3-3",jugadores:Array.from({length:n},(_,i)=>["Jugador "+(i+1),"",""])});
+ return{id:Date.now().toString(36),deporte:sp,fecha:"",resultado:"0-0",a:eq("Equipo A"),b:eq("Equipo B"),lectura:"",datos:[["Dato",1,1]]}}
 function dl(){const t="/* Contenido de Línea de tres. Generado desde el modo editor. */\nvar NOMBRE = "+JSON.stringify(NOMBRE)+";\nconst PARTIDOS = "+JSON.stringify(PARTIDOS,null,1)+";\n";
  const a=$e("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/javascript"}));a.download="partidos.js";a.click()}
 function teamEd(t,title){
@@ -198,21 +232,21 @@ function teamEd(t,title){
   ...t.jugadores.map(j=>$e("div","prow",[inp(j[0],v=>j[0]=v,0,"Nombre"),inp(j[1],v=>j[1]=v,0,"foto.jpg"),inp(j[2],v=>j[2]=v,0,"Tu comentario")]))]);
 }
 function ed(){
- const E=$("ed");E.hidden=false;E.innerHTML="";const m=curM();
+ const E=$("ed");E.hidden=false;E.innerHTML="";const m=inHome?null:curM();
  E.append($e("h2","",["Modo editor"]),$e("p","hint",["Esto es solo para vos: tus cambios se guardan en este navegador y no los ve nadie hasta que descargues partidos.js y lo subas a GitHub."]),
-  $e("div","",[btn("+ Partido nuevo",()=>{PARTIDOS.unshift(nuevo());idx=0;sync();ed()}),btn("Descargar partidos.js",dl,"mini ok"),btn("Descartar borrador",()=>{try{localStorage.removeItem("lt-borrador")}catch(e){}location.reload()},"mini del")]),
+  $e("div","",[btn("+ Partido de fútbol",()=>add("futbol")),btn("+ Partido de NBA",()=>add("nba")),btn("Descargar partidos.js",dl,"mini ok"),btn("Descartar borrador",()=>{try{localStorage.removeItem("lt-borrador")}catch(e){}location.reload()},"mini del")]),
   fld("Nombre del sitio",inp(NOMBRE,v=>NOMBRE=v)));
- if(!m)return;
+ if(!m){E.append($e("p","hint",["Entrá a un partido para editar sus jugadores, esquemas y números."]));return}
  E.append($e("h3","",["Partido seleccionado"]),fld("Fecha",inp(m.fecha,v=>m.fecha=v,0,"12 de octubre de 2026")),fld("Resultado",inp(m.resultado,v=>m.resultado=v,0,"2-1")),
   $e("div","two",[teamEd(m.a,"Equipo A (color dorado)"),teamEd(m.b,"Equipo B (color celeste)")]),
   fld("Mi lectura",inp(m.lectura,v=>m.lectura=v,"area")),$e("h3","",["Los números"]),$e("p","hint",["Dato, número de A, número de B"]),
   ...m.datos.map((r,j)=>$e("div","drow",[inp(r[0],v=>r[0]=v),inp(r[1],v=>r[1]=v,"number"),inp(r[2],v=>r[2]=v,"number"),btn("Quitar",()=>{m.datos.splice(j,1);sync();ed()})])),
   btn("+ Agregar dato",()=>{m.datos.push(["Dato",1,1]);sync();ed()}),
-  btn("Borrar este partido",()=>{if(confirm("¿Borrar este partido?")){PARTIDOS.splice(PARTIDOS.indexOf(m),1);idx=0;sync();ed()}},"mini del"));
+  btn("Borrar este partido",()=>{if(confirm("¿Borrar este partido?")){PARTIDOS.splice(PARTIDOS.indexOf(m),1);sync();location.hash="#/"}},"mini del"));
 }
 if(EDIT){try{const s=JSON.parse(localStorage.getItem("lt-borrador")||"null");if(s){NOMBRE=s.n;PARTIDOS.length=0;PARTIDOS.push(...s.p)}}catch(e){}}
 $("brand").textContent=NOMBRE;
-setSport("futbol");
+route();
 </script>
 </body>
 </html>
